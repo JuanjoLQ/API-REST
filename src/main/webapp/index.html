@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Ejemplo REST</title>
+	
+	<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+	
+</head>
+<body>
+
+	<a href="rest/hola/juan/garcia?min=false">Invocar Hello Rest</a>
+
+<br/><br/>
+
+<script>
+
+	$(document).ready(function(){
+	    $("#getJSONButton").click(function(){
+	        $.get("rest/getjson",
+			      {},
+			        function(data,status){	
+			    	  //alert(data);
+			    	  var frase = '';
+			    	  jQuery.each(data.productos, function(i, val) {
+			    		  frase += 'ID: ' + val.id + '\nName: ' + val.name+ '\n';
+			    		  //console.log("ID: " + val.id + "\nName: " + val.name);
+			    		  //alert("ID: " + val.id + "\nName: " + val.name);
+			    		});
+			    	  console.log(frase);
+			        });
+	    });
+	});
+	
+	$(document).ready(function(){
+		$("#sendJSONButton").click(function(){	
+			var sendInfo = {producto:{id: '1',name: 'pera'}};
+		
+		    $.ajax({
+		           type: "POST",
+		           headers: { 
+		               'Accept': 'application/json',
+		               'Content-Type': 'application/json' 
+		           },
+		           url: "rest/sendjson",
+		           dataType: "json",
+		           success: function (msg) {
+		               if (msg) {
+		                   alert(msg.resultado);
+		               } else {
+		                   alert("Error!");
+		               }
+		           },
+		           
+		           data:  JSON.stringify(sendInfo)
+		    });
+	 });
+});
+
+</script>
+
+
+</head>
+<body>
+
+<button id="getJSONButton">Get JSON</button>
+
+<br/><br/>
+<button id="sendJSONButton">Send JSON</button>
+
+Id:
+
+
+
+</body>
+</html>
