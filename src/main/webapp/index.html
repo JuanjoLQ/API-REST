@@ -14,31 +14,97 @@
 <br/><br/>
 
 <script>
-
+	
 	$(document).ready(function(){
 	    $("#getJSONButton").click(function(){
 	        $.get("rest/getjson",
 			      {},
-			        function(data,status){	
+			        function(data,status){
 			    	  //alert(data);
 			    	  var frase = '';
 			    	  jQuery.each(data.productos, function(i, val) {
-			    		  frase += 'ID: ' + val.id + '\nName: ' + val.name+ '\n';
+			    		  frase += 'ID: ' + val.id + '\nName: ' + val.name+ '<br />';
 			    		  //console.log("ID: " + val.id + "\nName: " + val.name);
 			    		  //alert("ID: " + val.id + "\nName: " + val.name);
 			    		});
-			    	  console.log(frase);
+			    		console.log(frase);
+			    		document.getElementById("frase").innerHTML = frase;
 			        });
 	    });
 	});
 	
+	//Borrar
 	$(document).ready(function(){
-		$("#sendJSONButton").click(function(){	
-			var sendInfo = {producto:{id: '1',name: 'pera'}};
-		
+		$("#deleteJSONButton").click(function(){
+			var sendInfo = {producto:{id: $('#idDelete').val(), name: $('#name').val()}};
+			
+		    $.ajax({
+		           type: "DELETE",
+		           headers: {
+		               'Accept': 'application/json',
+		               'Content-Type': 'application/json' 
+		           },
+		           url: "rest/deletejson",
+		           dataType: "json",
+		           success: function (msg) {
+		               if (msg) {
+		                   alert(msg.resultado);
+		               } else {
+		                   alert("Error!");
+		               }
+		           },
+		           
+		           data:  JSON.stringify(sendInfo)
+		    });
+	 });
+});
+	
+	
+	
+	//Modificar
+	$(document).ready(function(){
+		$("#updateJSONButton").click(function(){
+			var sendInfo = {producto:{id: $('#idUpdate').val(), name: $('#nameUpdate').val()}};
+			
+		    $.ajax({
+		           type: "PUT",
+		           headers: {
+		               'Accept': 'application/json',
+		               'Content-Type': 'application/json' 
+		           },
+		           url: "rest/putjson",
+		           dataType: "json",
+		           success: function (msg) {
+		               if (msg) {
+		                   alert(msg.resultado);
+		               } else {
+		                   alert("Error!");
+		               }
+		           },
+		           
+		           data:  JSON.stringify(sendInfo)
+		    });
+	 });
+});
+	
+	
+	
+
+    function nuevoContenido(frase) {
+      alert("carga el contenido nuevo");
+      document.open();
+      document.write(frase);
+      document.close();
+    }
+  
+	
+	$(document).ready(function(){
+		$("#sendJSONButton").click(function(){
+			var sendInfo = {producto:{id: $('#id').val(), name: $('#name').val()}};
+			
 		    $.ajax({
 		           type: "POST",
-		           headers: { 
+		           headers: {
 		               'Accept': 'application/json',
 		               'Content-Type': 'application/json' 
 		           },
@@ -66,10 +132,20 @@
 <button id="getJSONButton">Get JSON</button>
 
 <br/><br/>
+ID: <input type="text" id = "id">
+Name: <input type="text" id = "name">
 <button id="sendJSONButton">Send JSON</button>
 
-Id:
+<br/><br/>
+ID: <input type="text" id = "idUpdate">
+Name: <input type="text" id = "nameUpdate">
+<button id="updateJSONButton">Update JSON</button>
 
+<br/><br/>
+ID: <input type="text" id = "idDelete">
+<button id="deleteJSONButton">Delete JSON</button>
+
+<p id="frase"></p>
 
 
 </body>

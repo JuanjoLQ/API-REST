@@ -3,12 +3,16 @@ package edu.ucam;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -16,16 +20,30 @@ import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
 
+import edu.ucam.pojos.Factura;
 import edu.ucam.pojos.Producto;
 
 @Path("/")
 public class JSONService {
-	private Hashtable<String, Producto> productos = new Hashtable<String, Producto>();
+	static private Hashtable<String, Producto> productos = new Hashtable<String, Producto>();
+	static private Hashtable<String, Factura> facturas = new Hashtable<String, Factura>();
+	
 	
 	@GET
 	@Path("/getjson")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response sendJSON() {
+		/*
+		if (this.productos.size() < 3) {
+			this.productos.put("10", new Producto("10", "Manzana"));
+			this.productos.put("11", new Producto("11", "Platano"));	
+		}
+		else{
+			this.productos.put("12", new Producto("12", "Naranja"));
+			this.productos.put("13", new Producto("13", "Castaña"));
+		}
+		*/
+		
 		//Objeto JSON de respuesta
 		JSONObject jsonRespuesta = new JSONObject();	
 		
@@ -34,17 +52,14 @@ public class JSONService {
 		
 		
 		//Objeto JSON para cada producto
-		JSONObject jsonProducto = new JSONObject();
 		
 		Enumeration productoEnumeration = this.productos.elements();
-
-		this.productos.put("10", new Producto("10", "Manzana"));
-		this.productos.put("11", new Producto("11", "Platano"));
-
-
+		
 		while(productoEnumeration.hasMoreElements()){
+			JSONObject jsonProducto = new JSONObject();
 		    Producto producto = (Producto) productoEnumeration.nextElement();
 		    jsonProducto.put("id", producto.getId()); 
+		    //System.out.println("ID: " + producto.getId());
 		    jsonProducto.put("name", producto.getName()); 
 		    jsonRespuesta.append("productos", jsonProducto);
 		}
@@ -116,4 +131,93 @@ public class JSONService {
 		
 		return Response.status(200).entity(jsonRespuesta.toString()).build();
 	}
+	
+	
+	@DELETE	
+	@Path("/deletejson")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteJSON(InputStream incomingData) {
+		
+		//Recuperamos el String correspondiente al JSON que nos envía el navegador
+		StringBuilder sb = new StringBuilder();
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(incomingData));
+			String line = null;
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+			}
+		} catch (Exception e) {
+			System.out.println("Error Parsing: - ");
+		}
+		
+		//Construimos un objeto JSON en base al recibido como cadena 
+		JSONObject jsonRecibido = new JSONObject(sb.toString());
+		
+		//Recuperamos el valor del atributo name del objeto recibido
+		String idDelete = jsonRecibido.getJSONObject("producto").getString("id");
+		System.out.println("Delete--> " + idDelete);
+		String frase = "";
+		//Añadimos datos
+		if(this.productos.containsKey(idDelete)) {
+			this.productos.remove(idDelete);
+			frase = "Producto eliminado correctamente";
+		}
+		else {
+			frase = "Producto NO eliminado correctamente";
+		}
+		
+		
+		//Generamos un objeto JSON como respuesta
+		JSONObject jsonRespuesta = new JSONObject();
+		jsonRespuesta.append("resultado", frase);
+		
+		return Response.status(200).entity(jsonRespuesta.toString()).build();
+	}
+	
+	@PUT
+	@Path("/putjson")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response updateJSON(InputStream incomingData) {
+		
+		//Recuperamos el String correspondiente al JSON que nos envía el navegador
+		StringBuilder sb = new StringBuilder();
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(incomingData));
+			String line = null;
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+			}
+		} catch (Exception e) {
+			System.out.println("Error Parsing: - ");
+		}
+		
+		//Construimos un objeto JSON en base al recibido como cadena 
+		JSONObject jsonRecibido = new JSONObject(sb.toString());
+		
+		//Recuperamos el valor del atributo name del objeto recibido
+		String idUpdate = jsonRecibido.getJSONObject("producto").getString("id");
+		String nameUpdate = jsonRecibido.getJSONObject("producto").getString("name");
+		System.out.println("Update--> " + idUpdate);
+		String frase = "";
+		//Añadimos datos
+		if(this.productos.containsKey(idUpdate)) {
+			this.productos.replace(idUpdate, new Producto(idUpdate, nameUpdate));
+			frase = "Producto modificado correctamente";
+		}
+		else {
+			frase = "Producto NO modificado correctamente";
+		}
+		
+		
+		//Generamos un objeto JSON como respuesta
+		JSONObject jsonRespuesta = new JSONObject();
+		jsonRespuesta.append("resultado", frase);
+		
+		return Response.status(200).entity(jsonRespuesta.toString()).build();
+	}
+	
+	
+	
+	
+	
 }
