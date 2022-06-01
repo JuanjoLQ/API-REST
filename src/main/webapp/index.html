@@ -2,17 +2,10 @@
 <html>
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Ejemplo REST</title>
+	<title>REST Productos</title>
 	
 	<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
 	
-</head>
-<body>
-
-	<a href="rest/hola/juan/garcia?min=false">Invocar Hello Rest</a>
-
-<br/><br/>
-
 <script>
 	
 	$(document).ready(function(){
@@ -87,15 +80,6 @@
 	 });
 });
 	
-	
-	
-
-    function nuevoContenido(frase) {
-      alert("carga el contenido nuevo");
-      document.open();
-      document.write(frase);
-      document.close();
-    }
   
 	
 	$(document).ready(function(){
@@ -129,21 +113,26 @@
 </head>
 <body>
 
-<button id="getJSONButton">Get JSON</button>
+<a href="facturas.jsp">Ir a Facturas</a>
+<h1>Productos</h1>
+
+
+
+<button id="getJSONButton">Listar productos</button>
 
 <br/><br/>
 ID: <input type="text" id = "id">
 Name: <input type="text" id = "name">
-<button id="sendJSONButton">Send JSON</button>
+<button id="sendJSONButton">Añadir producto</button>
 
 <br/><br/>
 ID: <input type="text" id = "idUpdate">
 Name: <input type="text" id = "nameUpdate">
-<button id="updateJSONButton">Update JSON</button>
+<button id="updateJSONButton">Actualizar producto</button>
 
 <br/><br/>
 ID: <input type="text" id = "idDelete">
-<button id="deleteJSONButton">Delete JSON</button>
+<button id="deleteJSONButton">Eliminar producto</button>
 
 <p id="frase"></p>
 

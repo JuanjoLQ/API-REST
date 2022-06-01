@@ -10,6 +10,11 @@ public class Factura {
 	
 	public Factura() {
 	}
+	
+	public Factura(String id) {
+		super();
+		this.id = id;
+	}
 
 	public Factura(String id, Hashtable<String, Producto> productos) {
 		super();
@@ -34,13 +39,13 @@ public class Factura {
 	}
 	
 	public String toStringFactura() {
-		String frase = "Factura " + this.getId() + ":\n";
+		String frase = "Factura " + this.getId() + ":<br />";
 		Enumeration<Producto> eProducto = productos.elements();
 		Producto producto = null;
 		
 		while(eProducto.hasMoreElements()){
 			producto = eProducto.nextElement();
-			frase += "\t" + producto.getId() + ": " + producto.getName() + "\n";
+			frase += "&nbsp;&nbsp;&nbsp;&nbsp;" + producto.getId() + ": " + producto.getName() + " Stock: " + producto.getStock() + "<br />";
 		}
 		return frase;
 	}
@@ -52,6 +57,36 @@ public class Factura {
 		}
 		else {
 			return null;
+		}
+	}
+	
+	public String addProducto(Producto producto) {
+		
+		if(producto != null) {
+			if(this.productos.containsKey(producto.getId())){
+				this.productos.get(producto.getId()).addStock();
+				return "Se ha agregado stock correctamente al producto en la factura";
+			}
+			else{
+				producto.addStock();
+				this.productos.put(producto.getId(), producto);
+				return "Se ha insertado correctamente el producto en la factura";
+			}
+		}
+		else {
+			return "No se ha insertado correctamente";
+		}
+		
+	}
+	
+	public String deleteProducto(String id) {
+		
+		if(this.productos.containsKey(id)){
+			this.productos.remove(id);
+			return "Se ha eliminado correctamente el producto de la factura";
+		}
+		else{
+			return "No se ha eliminado correctamente";
 		}
 	}
 	
